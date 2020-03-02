@@ -3,7 +3,7 @@ import React from "react"
 import TodoItem from "./TodoItem.js"
 
 import type { OperationComponent } from "react-apollo"
-import type { todo as Todo, priority, TodoInput } from "../flowTypes"
+import type { todo as Todo, priority, TodoInput, TodoMutationInput } from "../flowTypes"
 import {
 	gql,
 	graphql,
@@ -18,8 +18,8 @@ type State = {
 type Props = {
 	addTodo: ({ text: string }) => void,
 	deleteTodo: string => Promise<string>,
-	//editTodo: (id: string, todo: TodoInput) => Promise<Todo>,
-	editTodo: (id: string, text: string, priority: string, dueDate: Date, completed: Boolean) => Promise<Todo>,
+	editTodo: (id: string, todo: TodoInput) => Promise<Todo>,
+	//editTodo: (id: string, text: string, priority: string, dueDate: Date, completed: Boolean) => Promise<Todo>,
 	data: {
 		loading: boolean,
 		error: { message: string },
@@ -90,15 +90,19 @@ class TodoList extends React.Component<Props, State> {
 			return id
 		})
 	}
-	//editTodo(id: string, todo: TodoInput) {
 	editTodo(id: string, todo: TodoInput) {
-		return this.props.editTodo(
-			id, todo.text, todo.priority,
-			todo.dueDate, todo.completed
-			).then(todo => {
-				return todo
+		return this.props.editTodo(id, todo).then(todo => {
+			return todo
 		})
 	}
+	//editTodo(id: string, todo: TodoInput) {
+	//	return this.props.editTodo(
+	//		id, todo.text, todo.priority,
+	//		todo.dueDate, todo.completed
+	//		).then(todo => {
+	//			return todo
+	//	})
+	//}
 	setSortType = (sortType: SortType) => () => {
 		this.setState({
 			sortType: sortType
@@ -188,16 +192,27 @@ const addTodo = gql`
 		}
 	}
 `
+//const editTodo = gql`
+//	mutation editTodo($id: String!, $text: String, $priority: String, $dueDate: String, $completed: Boolean) {
+//		editTodo(id: $id, , text: $text, priority: $priority, dueDate: $dueDate, completed: $completed) {
+//			todo {
+//				id
+//				text
+//				priority
+//				dueDate
+//				completed
+//			}
+//		}
+//	}
+//`
 const editTodo = gql`
-	mutation editTodo($id: String!, $text: String, $priority: String, $dueDate: String, $completed: Boolean) {
-		editTodo(id: $id, , text: $text, priority: $priority, dueDate: $dueDate, completed: $completed) {
-			todo {
-				id
-				text
-				priority
-				dueDate
-				completed
-			}
+	mutation editTodo($id: String!, $todo: TodoMutationInput!) {
+		editTodo(id: $id, todo: $todo) {
+			id
+			text
+			priority
+			dueDate
+			completed
 		}
 	}
 `
@@ -219,9 +234,11 @@ type GetResult = {
 }
 const withEdit: OperationComponent<EditResult> = graphql(editTodo, {
 	props: ({ mutate }) => ({
-		editTodo: (id: string, text: string, priority: string, dueDate: Date, completed: Boolean) =>
+		//editTodo: (id: string, text: string, priority: string, dueDate: Date, completed: Boolean) =>
+		editTodo: (id: string, todo: TodoInput) =>
 			mutate({
-				variables: { id, text, priority, dueDate, completed },
+				//variables: { id, text, priority, dueDate, completed },
+				variables: { id, todo },
 				//https://github.com/apollographql/apollo-client/issues/899
 				//$FlowFixMe
 				refetchQueries: [{ query: getTodos }]

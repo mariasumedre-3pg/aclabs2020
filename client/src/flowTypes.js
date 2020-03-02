@@ -15,3 +15,21 @@ export type TodoInput = {
 	priority?: priority,
 	completed?: boolean
 }
+
+export type TodoPriority = {
+	priority?: priority,
+}
+
+export type TodoMutationPayload = {
+	text?: string,
+	dueDate?: string,
+	priority?: TodoPriority,
+	completed?: boolean
+}
+
+export type TodoMutationInput = {
+	text?: string,
+	dueDate?: string,
+	priority?: priority,
+	completed?: boolean
+}

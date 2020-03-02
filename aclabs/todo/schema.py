@@ -2,35 +2,45 @@ import datetime
 import graphene
 
 from graphene_django.types import DjangoObjectType
+from graphene_django.forms.mutation import DjangoModelFormMutation
 
 from todo.models import Todo
+from todo.forms import TodoForm
 
 
 class TodoType(DjangoObjectType):
     class Meta:
         model = Todo
 
-class TodoMutation(graphene.Mutation):
-    class Arguments:
-        id = graphene.String(required=True)
-        text = graphene.String()
-        priority = graphene.String()
-        dueDate = graphene.String()
-        completed = graphene.Boolean()
 
+class TodoMutation(DjangoModelFormMutation):
     todo = graphene.Field(TodoType)
 
-    def mutate(self, info, id, text=None, priority=None, dueDate=None, completed=False):
-        todo = Todo.objects.get(pk=id)
-        if text is not None:
-            todo.text = text
-        if priority:
-            todo.priority = priority
-        if dueDate:
-            todo.due_date = datetime.datetime.fromisoformat(dueDate)
-        todo.completed = completed
-        todo.save()
-        return TodoMutation(todo=todo)
+    class Meta:
+        form_class = TodoForm
+
+
+# class TodoMutation(graphene.Mutation):
+#     class Arguments:
+#         id = graphene.String(required=True)
+#         text = graphene.String()
+#         priority = graphene.String()
+#         dueDate = graphene.String()
+#         completed = graphene.Boolean()
+
+#     todo = graphene.Field(TodoType)
+
+#     def mutate(self, info, id, text=None, priority=None, dueDate=None, completed=False):
+#         todo = Todo.objects.get(pk=id)
+#         if text is not None:
+#             todo.text = text
+#         if priority:
+#             todo.priority = priority
+#         if dueDate:
+#             todo.due_date = datetime.datetime.fromisoformat(dueDate)
+#         todo.completed = completed
+#         todo.save()
+#         return TodoMutation(todo=todo)
 
 
 class AddTodoInput(graphene.InputObjectType):
