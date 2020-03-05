@@ -1,2 +1,2 @@
-django==2.2
+django==2.2.10
 graphene_django==2.8.2
