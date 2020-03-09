@@ -79,8 +79,12 @@ WSGI_APPLICATION = 'aclabs.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'aclabs2020',
+        'USER': 'admin',
+        'PASSWORD': os.environ.get('DB_PASSWORD', ''),
+        'HOST': 'aclabs2020.cjnqdhi3bkuy.us-east-2.rds.amazonaws.com',
+        'PORT': '3306',
     }
 }
 
