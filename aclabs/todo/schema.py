@@ -1,6 +1,7 @@
 import datetime
-import graphene
 
+from django.db.models import Q
+import graphene
 from graphene_django.types import DjangoObjectType
 
 from todo.models import Todo
@@ -68,8 +69,27 @@ class Query(object):
         name=graphene.String()
     )
 
+    def _get_text_filter(self, value) -> Q:
+        if value:
+            return Q(text__istartswith=value)
+        return Q()
+
+    def _get_priority_filter(self, value) -> Q:
+        if value:
+            return Q(priority=value)
+        return Q()
+
+    def _get_completed_filter(self, value) -> Q:
+        if value is not None:
+            return Q(completed=value)
+        return Q()
+
     def resolve_all_todos(self, info, **kwargs):
-        return Todo.objects.all()
+        main_filter = self._get_text_filter(kwargs.get("text")) & \
+                      self._get_priority_filter(kwargs.get("priority")) & \
+                      self._get_completed_filter(kwargs.get("completed"))
+
+        return Todo.objects.filter(main_filter)
     
     def resolve_todo(self, info, **kwargs):
         _id = kwargs.get("id")
