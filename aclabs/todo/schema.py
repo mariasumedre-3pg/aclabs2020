@@ -69,20 +69,20 @@ class Query(object):
         name=graphene.String()
     )
 
-    @classmethod
-    def _get_text_filter(cls, value) -> Q:
+    @staticmethod
+    def _get_text_filter(value) -> Q:
         if value:
             return Q(text__istartswith=value)
         return Q()
 
-    @classmethod
-    def _get_priority_filter(cls, value) -> Q:
+    @staticmethod
+    def _get_priority_filter(value) -> Q:
         if value:
             return Q(priority=value)
         return Q()
 
-    @classmethod
-    def _get_completed_filter(cls, value) -> Q:
+    @staticmethod
+    def _get_completed_filter(value) -> Q:
         if value is not None:
             return Q(completed=value)
         return Q()
