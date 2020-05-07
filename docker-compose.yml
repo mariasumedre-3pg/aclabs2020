@@ -4,6 +4,8 @@ services:
     build:
       context: ./aclabs
       dockerfile: ./Dockerfile
+    stdin_open: true
+    tty: true
     # env_file:
     #   - 'aws.env'
     ports:

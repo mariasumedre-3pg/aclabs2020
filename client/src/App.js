@@ -22,7 +22,8 @@ class App extends Component {
 		// Initialize Apollo Client with URL to our server
 		return new ApolloClient({
 			networkInterface: createNetworkInterface({
-				uri: "http://127.0.0.1:8000/graphql/"
+				//uri: "http://127.0.0.1:8000/graphql/"
+				uri: document.TODO_GRAPHQL_ENDPOINT || "nooooo"
 				// dataIdFromObject: o => o.id
 			})
 		})
