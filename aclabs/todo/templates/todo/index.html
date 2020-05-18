@@ -1,0 +1,23 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
+        <meta name="theme-color" content="#000000">
+        <link href="https://fonts.googleapis.com/css?family=Quicksand" rel="stylesheet">
+        <link rel="shortcut icon" href="/favicon.ico">
+        <title>ACLabs 2020 ToDo App</title>
+        <link href="{% static "todo/css/main.6f3aee86.css" %}" rel="stylesheet">
+    </head>
+    <body>
+        <noscript>You need to enable JavaScript to run this app.</noscript>
+        <div id="root"></div>
+         <script type="text/javascript">
+            document.TODO_GRAPHQL_ENDPOINT = "{{ graphql_url }}"
+        </script>
+        <script type="text/javascript" src="{% static "todo/js/main.436f69f1.js"%}">
+        </script>
+    </body>
+</html>
