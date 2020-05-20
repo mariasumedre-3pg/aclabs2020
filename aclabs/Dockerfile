@@ -1,16 +1,20 @@
 FROM python:3.7
 
-RUN apt-get update && apt-get install -y libmariadb-dev
+RUN apt update
+RUN apt-get install nginx -y
+RUN apt-get install libmariadb-dev -y
+
+RUN pip install Django==2.2.12
+RUN pip install graphene_django==2.8.2
+
+RUN pip install gunicorn
+
+COPY configuration/aclabs /etc/nginx/sites-available/
+RUN ln -s /etc/nginx/sites-available/aclabs /etc/nginx/sites-enabled
 
 RUN mkdir /app
-COPY . /app
+ADD . /app
 WORKDIR /app
 
-EXPOSE 8000
 
-RUN pwd
-RUN ls
-RUN pip install -r requirements.txt && \
-    /app/manage.py migrate
-
-CMD ["/app/manage.py", "runserver", "0.0.0.0:8000"]
+CMD [ "configuration/entrypoint.sh" ]

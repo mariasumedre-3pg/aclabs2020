@@ -11,7 +11,8 @@ class TodoType(DjangoObjectType):
     class Meta:
         model = Todo
 
-class TodoMutation(graphene.Mutation):
+
+class EditTodoMutation(graphene.Mutation):
     class Arguments:
         id = graphene.String(required=True)
         text = graphene.String()
@@ -31,7 +32,7 @@ class TodoMutation(graphene.Mutation):
             todo.due_date = datetime.datetime.fromisoformat(dueDate)
         todo.completed = completed
         todo.save()
-        return TodoMutation(todo=todo)
+        return EditTodoMutation(todo=todo)
 
 
 class AddTodoInput(graphene.InputObjectType):
@@ -49,24 +50,46 @@ class AddTodoMutation(graphene.Mutation):
     todo = graphene.Field(TodoType)
 
     def mutate(self, info, todo):
+        due_date = None
+        completed = False
+        if todo.dueDate:
+            due_date = datetime.datetime.fromisoformat(todo.dueDate)
+        if todo.completed is True:
+            completed = True
         new_todo = Todo.objects.create(
             text=todo.text,
-            priority=todo.priority or "LOW"
+            priority=todo.priority or "LOW",
+            due_date=due_date,
+            completed=completed
         )
         return AddTodoMutation(todo=new_todo)
 
 
+class DeleteTodoMutation(graphene.Mutation):
+    class Arguments:
+        id = graphene.String(required=True)
+
+    ok = graphene.Boolean()
+
+    def mutate(self, info, **kwargs):
+        todo = Todo.objects.filter(pk=kwargs.get("id")).first()
+        count, _ = todo.delete()
+        deleted = True if count == 1 else False
+        return DeleteTodoMutation(ok=deleted)
+
+
 class Mutation(graphene.ObjectType):
-    edit_todo = TodoMutation.Field()
+    edit_todo = EditTodoMutation.Field()
     add_todo = AddTodoMutation.Field()
+    delete_todo = DeleteTodoMutation.Field()
 
 
 class Query(object):
     all_todos = graphene.List(TodoType)
     todo = graphene.Field(
         TodoType,
-        id=graphene.Int(),
-        name=graphene.String()
+        id=graphene.String(),
+        text=graphene.String()
     )
 
     @staticmethod

@@ -204,7 +204,9 @@ const editTodo = gql`
 
 const deleteTodo = gql`
 	mutation deleteTodo($id: String!) {
-		deleteTodo(id: $id)
+		deleteTodo(id: $id) {
+			ok
+		}
 	}
 `
 type DeleteResult = {}
